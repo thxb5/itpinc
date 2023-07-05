@@ -1,6 +1,8 @@
 package first.sample.controller;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -10,7 +12,10 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
@@ -175,14 +180,33 @@ public class SampleController
 	{
 		ModelAndView mv = new ModelAndView("redirect:/sample/openBoardList.do");
 		
-		String idx = String.valueOf(commandMap.get("IDX"));
-		System.out.println(">>>>>>idx="+idx);
-		
 		sampleService.deleteBoard(commandMap.getMap());
 		mv.addObject("IDX", commandMap.get("IDX"));
 	
 		return mv;
 	}
+	
+	@RequestMapping(value="/sample/selectDeleteBoard.do")
+	public ModelAndView selectDeleteBoard(CommandMap commandMap) throws Exception
+	{
+		ModelAndView mv = new ModelAndView("redirect:/sample/openBoardList.do");
+		
+		List<String> idxList = (List<String>) commandMap;
+
+		for (String idx : idxList) {
+		    Map<String, Object> paramMap = new HashMap();
+		    paramMap.put("IDX", idx);
+
+		    sampleService.deleteBoard(paramMap);
+		}
+
+		
+		mv.addObject("IDX", commandMap.get("IDX"));
+	
+		return mv;
+	}
+	
+	
 	
 	@RequestMapping(value="/sample/backPage.do")
 	public ModelAndView backPage(CommandMap commandMap) throws Exception
